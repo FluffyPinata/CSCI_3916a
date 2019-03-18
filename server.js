@@ -95,5 +95,11 @@ router.post('/signin', function(req, res) {
     });
 });
 
+
+router.all('*', function(req, res) {
+    res.json({success: false, message: 'HTTP method unsupported'});
+});
+
+
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
