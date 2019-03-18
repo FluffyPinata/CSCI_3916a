@@ -125,13 +125,44 @@ router.route('/movies')
         })
     })
     .put(authJwtController.isAuthenticated, function(req, res) {
-        res.json({ status: 200, message: 'movie updated', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
+        Movie.findOneAndUpdate( { title: req.body.title },
+            {
+                title: req.body.title,
+                releaseYear: req.body.releaseYear,
+                genre: req.body.genre,
+                actors: req.body.actors,
+            },
+            function(err) {
+                if (err) {
+                    res.json({message: 'General error'});
+                } else if (req.data === 0) {
+                    res.json({message: 'Movie could not be found'});
+                } else {
+                    res.json({message: 'Movie was successfully updated'})
+                }
+            })
     })
     .delete(authJwtController.isAuthenticated, function(req, res) {
-        res.json({ status: 200, message: 'movie deleted', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
+        Movie.findOneAndDelete( { title: req.body.title }, function(err) {
+            if (err) {
+                res.json({message: 'General error'});
+            } else if (req.data === null) {
+                res.json({message: 'Movie could not be found'});
+            } else {
+                res.json({message: 'Movie was successfully deleted'})
+            }
+        })
     })
     .get(authJwtController.isAuthenticated, function(req, res) {
-        res.json({ status: 200, message: 'movie found', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
+        Movie.find( { title: req.body.title }, function(err) {
+            if (err) {
+                res.json({message: 'General error'});
+            } else if (req.data === 0) {
+                res.json({message: 'Movie could not be found'});
+            } else {
+                res.json({message: 'Movie was successfully found'})
+            }
+        })
     });
 
 
