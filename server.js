@@ -95,6 +95,21 @@ router.post('/signin', function(req, res) {
     });
 });
 
+router.route('/movies')
+    .post(authJwtController.isAuthenticated, function(req, res) {
+        res.json({ status: 200, message: 'movie posted', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });;
+    })
+    .put(authJwtController.isAuthenticated, function(req, res) {
+        res.json({ status: 200, message: 'movie updated', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
+    })
+    .delete(authJwtController.isAuthenticated, function(req, res) {
+        res.json({ status: 200, message: 'movie deleted', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
+    })
+    .get(authJwtController.isAuthenticated, function(req, res) {
+        res.json({ status: 200, message: 'movie found', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
+    });
+
+
 
 router.all('*', function(req, res) {
     res.json({success: false, message: 'HTTP method unsupported'});
