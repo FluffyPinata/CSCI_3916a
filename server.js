@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var passport = require('passport');
 var authJwtController = require('./auth_jwt');
 var User = require('./Users');
+var Movie = require('./movies');
 var jwt = require('jsonwebtoken');
 
 var app = express();
@@ -97,7 +98,31 @@ router.post('/signin', function(req, res) {
 
 router.route('/movies')
     .post(authJwtController.isAuthenticated, function(req, res) {
-        res.json({ status: 200, message: 'movie posted', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });;
+        Movie.findOne( { title: req.body.title }, function(err) {
+            if (err) {
+                res.json({message: 'General error'});
+            } else if (req.body.actors.length < 3) {
+                res.json({message: 'Actor array needs at least 3 actors'});
+            } else if (req.data !== 0) {
+                var movie = new Movie();
+                movie.title = req.body.title;
+                movie.releaseYear = req.body.releaseYear;
+                movie.genre = req.body.genre;
+                movie.actors = req.body.actors;
+                // save the user
+                movie.save(function (err) {
+                    if (err) {
+                        // duplicate entry
+                        if (err.code == 11000)
+                            return res.json({success: false, message: 'A movie already exists with that title.'});
+                        else
+                            return res.send(err);
+                    }
+
+                    res.json({success: true, message: 'Movie created!'});
+                });
+            }
+        })
     })
     .put(authJwtController.isAuthenticated, function(req, res) {
         res.json({ status: 200, message: 'movie updated', headers: req.headers, query: req.query, env: process.env.UNIQUE_KEY });
